@@ -115,5 +115,7 @@
 | 2026-05-05 | 已验证 | DevEco bootstrap `assembleHap` 成功，HDC 安装启动成功；已抓取 `artifacts/today_board_home_after_navfix.jpeg`、`artifacts/today_board_home_after_scroll.jpeg`、`artifacts/today_board_profile_calendar_refresh.jpeg` |
 | 2026-05-05 | 已完成 | 已填写 AppGallery Connect 基础信息文档：`docs/release/appgallery-basic-info.md`；本地包名改为 `com.zhouxufeng.todayboard`，应用名统一为“天气看门板” |
 | 2026-05-05 | 已验证 | 根目录和 DevEco bootstrap `assembleHap` 均成功；当前仍未配置 Release 签名，所以构建日志会提示跳过签名 |
-| 2026-05-05 | 已完成 | 已统一包内应用图标资源：`AppScope` 与 `entry` 使用同一套 `layered_image` 前景/背景，`startIcon.png` 改为同源 1024 x 1024 PNG |
+| 2026-05-05 | 已完成 | 已重新绘制应用图标母版：`docs/release/app-icon-source.svg`，视觉为蓝天、日历、清单、雨具四宫格，匹配“天气看门板” |
+| 2026-05-05 | 已完成 | 已统一包内应用图标资源：`AppScope` 与 `entry` 的 `background.png` 使用新 1024 图，`foreground.png` 为空透明层，`startIcon.png` 与上传 1024 图哈希一致 |
 | 2026-05-05 | 已完成 | 已导出 AppGallery 可上传图标：`docs/release/app-icon-1024.png` 和 `docs/release/app-icon-216.png`，均为正方形 PNG 且小于 3 MB |
+| 2026-05-05 | 已验证 | 新图标接入后，尺寸/大小/透明层/哈希校验通过；根目录 `assembleHap --no-daemon --no-incremental --info` 构建成功 |

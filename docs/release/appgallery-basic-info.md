@@ -42,8 +42,9 @@
 
 | 文件 | 规格 | 说明 |
 | --- | --- | --- |
-| `docs/release/app-icon-1024.png` | 1024 x 1024 PNG，79 KB | 由包内 `$media:layered_image` 的 `background.png` 和 `foreground.png` 扁平化导出 |
-| `docs/release/app-icon-216.png` | 216 x 216 PNG，24 KB | 与 1024 图同源，仅用于需要小尺寸图标的表单 |
+| `docs/release/app-icon-source.svg` | 1024 x 1024 SVG 母版 | 蓝天、日历、清单、雨具四宫格，匹配“天气看门板”主功能 |
+| `docs/release/app-icon-1024.png` | 1024 x 1024 PNG，206 KB | 与包内 `AppScope/resources/base/media/background.png`、`entry/src/main/resources/base/media/startIcon.png` 完全同源 |
+| `docs/release/app-icon-216.png` | 216 x 216 PNG，25 KB | 与 1024 图同源，仅用于需要小尺寸图标的表单 |
 
 ## 隐私摘要
 
