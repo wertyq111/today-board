@@ -1,0 +1,25 @@
+{
+  "forms": [
+    {
+      "name": "TodayBoardCard",
+      "displayName": "$string:today_board_form_name",
+      "description": "$string:today_board_form_description",
+      "src": "./ets/widget/pages/TodayBoardCard.ets",
+      "uiSyntax": "arkts",
+      "window": {
+        "designWidth": 720,
+        "autoDesignWidth": true
+      },
+      "isDynamic": true,
+      "isDefault": true,
+      "updateEnabled": true,
+      "updateDuration": 2,
+      "defaultDimension": "2*2",
+      "supportDimensions": [
+        "2*2"
+      ],
+      "colorMode": "auto",
+      "renderingMode": "fullColor"
+    }
+  ]
+}

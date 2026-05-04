@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>今日出门板 · 晨间备忘板完整闭环</title>
+  <style>
+    :root {
+      --paper: #fffaf0;
+      --paper-deep: #f7ecd3;
+      --board: #f1dfb6;
+      --cork: #cf9f5a;
+      --ink: #243025;
+      --muted: #7d755f;
+      --line: rgba(83, 64, 34, .16);
+      --green: #2f7d57;
+      --green-soft: #e4f1df;
+      --blue: #3d7bba;
+      --blue-soft: #dcecff;
+      --sun: #f2aa33;
+      --sun-soft: #fff0c2;
+      --rain: #527db4;
+      --rain-soft: #dfeeff;
+      --red: #c96a4b;
+      --red-soft: #ffe2d7;
+      --shadow: rgba(72, 50, 22, .18);
+      --font: "Avenir Next", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--font);
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px) 0 0 / 36px 36px,
+        linear-gradient(180deg, #f4dfb7 0%, #ead0a0 48%, #d6ad70 100%);
+    }
+
+    .board {
+      width: 1920px;
+      min-height: 1320px;
+      margin: 0 auto;
+      padding: 42px 48px 56px;
+      background:
+        radial-gradient(circle at 18% 9%, rgba(255,255,255,.55), transparent 21%),
+        radial-gradient(circle at 86% 10%, rgba(255,244,207,.58), transparent 18%),
+        linear-gradient(135deg, #f5e5c4 0%, #eccd96 100%);
+    }
+
+    .brief {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 28px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .brief h1 {
+      font-size: 36px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .brief p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .tagline {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: 760px;
+    }
+
+    .tagline span {
+      padding: 10px 14px;
+      border: 1px solid rgba(78, 56, 27, .15);
+      border-radius: 999px;
+      background: rgba(255, 250, 240, .72);
+      color: #56472e;
+      font-size: 14px;
+      box-shadow: 0 12px 28px rgba(95, 62, 24, .08);
+    }
+
+    .screens {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .screen-block {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+    }
+
+    .screen-label {
+      width: 286px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #6b604d;
+      font-size: 12px;
+    }
+
+    .screen-label b {
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .phone {
+      position: relative;
+      width: 286px;
+      height: 620px;
+      overflow: hidden;
+      border: 8px solid #2b2b25;
+      border-radius: 34px;
+      background: #fbf4e7;
+      box-shadow: 0 26px 62px rgba(74, 47, 20, .25), inset 0 0 0 1px rgba(255,255,255,.88);
+    }
+
+    .phone.small {
+      height: 430px;
+      margin-top: 54px;
+    }
+
+    .status {
+      height: 23px;
+      padding: 6px 14px 0;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(40, 47, 37, .72);
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .content {
+      height: calc(100% - 23px);
+      padding: 12px 12px 70px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(84, 67, 40, .06) 1px, transparent 1px) 0 0 / 22px 22px,
+        linear-gradient(0deg, rgba(84, 67, 40, .06) 1px, transparent 1px) 0 0 / 22px 22px,
+        var(--paper);
+    }
+
+    .content.no-tab {
+      padding-bottom: 14px;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .brand-mark {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--green);
+      box-shadow: 0 6px 12px rgba(47, 125, 87, .24);
+    }
+
+    .tiny-button,
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .62);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+      padding: 8px 10px;
+    }
+
+    .memo-card {
+      position: relative;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 252, 245, .9);
+      box-shadow: 0 12px 28px rgba(90, 58, 22, .12);
+    }
+
+    .memo-card::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -8px;
+      width: 44px;
+      height: 16px;
+      transform: translateX(-50%) rotate(-1deg);
+      border-radius: 4px;
+      background: rgba(255, 224, 126, .72);
+      box-shadow: 0 3px 7px rgba(90, 58, 22, .1);
+    }
+
+    .hero {
+      min-height: 138px;
+      background:
+        radial-gradient(circle at 86% 22%, rgba(242, 170, 51, .24), transparent 24%),
+        linear-gradient(135deg, #fff9e8 0%, #f7f0dd 100%);
+    }
+
+    .kicker {
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .headline {
+      margin-top: 7px;
+      font-size: 25px;
+      line-height: 1.08;
+      font-weight: 900;
+    }
+
+    .subtext {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .confirm-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .confirm {
+      padding: 8px 6px;
+      border-radius: 12px;
+      text-align: center;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 14px 2px 8px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .tiles {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .tile {
+      min-height: 82px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.62);
+    }
+
+    .tile img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .tile b {
+      display: block;
+      font-size: 12px;
+      line-height: 1.15;
+    }
+
+    .tile em {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1.25;
+      font-style: normal;
+    }
+
+    .list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 44px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.7);
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--green);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .check.open {
+      border: 2px solid #d7c39d;
+      background: #fff9ea;
+      color: transparent;
+    }
+
+    .item-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-text b {
+      display: block;
+      font-size: 12px;
+      line-height: 1.15;
+    }
+
+    .item-text span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1.25;
+    }
+
+    .pill {
+      padding: 5px 7px;
+      border-radius: 999px;
+      color: var(--green);
+      background: var(--green-soft);
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .pill.warn {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .pill.sun {
+      color: #a36700;
+      background: var(--sun-soft);
+    }
+
+    .tabbar {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 11px;
+      height: 50px;
+      padding: 5px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255, 250, 240, .92);
+      box-shadow: 0 12px 26px rgba(82, 55, 22, .14);
+    }
+
+    .tab {
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      border-radius: 15px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .tab.active {
+      color: #fff;
+      background: var(--green);
+    }
+
+    .tab img {
+      width: 19px;
+      height: 19px;
+      object-fit: contain;
+    }
+
+    .form-field {
+      margin-top: 8px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255,255,255,.7);
+    }
+
+    .form-field label {
+      display: block;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .form-field strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 13px;
+    }
+
+    .switch-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(83, 64, 34, .1);
+    }
+
+    .switch-row:last-child {
+      border-bottom: 0;
+    }
+
+    .switch-row b {
+      font-size: 12px;
+    }
+
+    .switch-row span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .switch {
+      width: 38px;
+      height: 22px;
+      padding: 3px;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: var(--green);
+    }
+
+    .switch::after {
+      content: "";
+      width: 16px;
+      height: 16px;
+      display: block;
+      margin-left: auto;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .rule-card {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.7);
+    }
+
+    .rule-card img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .rule-card b {
+      display: block;
+      font-size: 12px;
+    }
+
+    .rule-card span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1.25;
+    }
+
+    .widget-shell {
+      margin: 22px 16px 0;
+      padding: 18px;
+      border-radius: 28px;
+      background:
+        linear-gradient(90deg, rgba(84, 67, 40, .05) 1px, transparent 1px) 0 0 / 18px 18px,
+        linear-gradient(0deg, rgba(84, 67, 40, .05) 1px, transparent 1px) 0 0 / 18px 18px,
+        #fff8e8;
+      box-shadow: 0 20px 45px rgba(77, 50, 18, .2), inset 0 0 0 1px rgba(255,255,255,.8);
+    }
+
+    .widget-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .widget-big {
+      margin-top: 14px;
+      font-size: 27px;
+      line-height: 1.08;
+      font-weight: 900;
+    }
+
+    .widget-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .widget-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.66);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      padding: 18px 22px;
+      border: 1px solid rgba(83, 64, 34, .14);
+      border-radius: 22px;
+      background: rgba(255, 250, 240, .62);
+      color: #635943;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <section class="brief">
+      <div>
+        <h1>今日出门板 · 晨间备忘板完整闭环</h1>
+        <p>无后端、无地图、首版不做实时天气。核心是用户自己的出门清单和规则提醒。</p>
+      </div>
+      <div class="tagline">
+        <span>5 秒看懂还差什么</span>
+        <span>本地清单，不造数据</span>
+        <span>天气位保留但不承诺实时</span>
+        <span>桌面卡片同步核心提醒</span>
+      </div>
+    </section>
+
+    <section class="screens">
+      <article class="screen-block">
+        <div class="screen-label"><b>01 首次配置</b><span>固定习惯</span></div>
+        <div class="phone">
+          <div class="status"><span>7:20</span><span>100%</span></div>
+          <div class="content no-tab">
+            <div class="top">
+              <div class="brand"><span class="brand-mark">✓</span>今日出门板</div>
+              <span class="tiny-button">跳过</span>
+            </div>
+            <div class="memo-card hero">
+              <p class="kicker">SETUP</p>
+              <h2 class="headline">先把每天出门会带的东西写下来。</h2>
+              <p class="subtext">不填地址，不开地图。这里只保存你的本地习惯，后面首页和桌面卡片都读这份清单。</p>
+            </div>
+            <div class="section-title">常带物品<span>可随时改</span></div>
+            <div class="tiles">
+              <div class="tile"><img src="../../entry/src/main/resources/base/media/tb_icon_badge.png" alt=""><b>工牌</b><em>工作日默认提醒</em></div>
+              <div class="tile"><img src="../../entry/src/main/resources/base/media/tb_icon_bottle.png" alt=""><b>水杯</b><em>每天出门确认</em></div>
+              <div class="tile"><img src="../../entry/src/main/resources/base/media/tb_icon_earphones.png" alt=""><b>耳机</b><em>通勤前确认</em></div>
+              <div class="tile"><img src="../../entry/src/main/resources/base/media/tb_icon_phone.png" alt=""><b>充电器</b><em>低电量时提醒</em></div>
+            </div>
+            <div class="section-title">提醒偏好<span>不读实时天气</span></div>
+            <div class="memo-card">
+              <div class="switch-row"><div><b>雨具提醒</b><span>手动选择雨天标签时提醒雨伞</span></div><div class="switch"></div></div>
+              <div class="switch-row"><div><b>遮阳提醒</b><span>手动选择强日晒标签时提醒帽子/防晒</span></div><div class="switch"></div></div>
+              <div class="switch-row"><div><b>桌面卡片</b><span>只展示未确认的前三项</span></div><div class="switch"></div></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="screen-block">
+        <div class="screen-label"><b>02 今日首页</b><span>5 秒扫读</span></div>
+        <div class="phone">
+          <div class="status"><span>7:26</span><span>100%</span></div>
+          <div class="content">
+            <div class="top">
+              <div class="brand"><span class="brand-mark">板</span>早上好</div>
+              <span class="tiny-button">编辑</span>
+            </div>
+            <div class="memo-card hero">
+              <p class="kicker">TODAY</p>
+              <h2 class="headline">还差 3 件，确认完就能出门。</h2>
+              <p class="subtext">实时天气首版不接入。今天的遮阳、雨具提醒来自你手动选择的场景标签。</p>
+              <div class="confirm-strip">
+                <div class="confirm">已确认 5</div>
+                <div class="confirm" style="background:var(--red-soft);color:var(--red)">未确认 3</div>
+                <div class="confirm" style="background:var(--sun-soft);color:#9a6500">强日晒</div>
+              </div>
+            </div>
+            <div class="section-title">场景提醒<span>手动标签</span></div>
+            <div class="tiles">
+              <div class="tile"><img src="../../entry/src/main/resources/base/media/tb_icon_umbrella.png" alt=""><b>雨具</b><em>未选择雨天，暂不提醒</em></div>
+              <div class="tile"><img src="../../entry/src/main/resources/base/media/tb_icon_bag.png" alt=""><b>遮阳</b><em>带帽子或防晒</em></div>
+            </div>
+            <div class="section-title">出门清单<span>3 项待确认</span></div>
+            <div class="list">
+              <div class="item"><span class="check">✓</span><div class="item-text"><b>工牌</b><span>工作日固定项</span></div><span class="pill">已带</span></div>
+              <div class="item"><span class="check open">?</span><div class="item-text"><b>水杯</b><span>每天确认</span></div><span class="pill warn">待确认</span></div>
+              <div class="item"><span class="check open">?</span><div class="item-text"><b>防晒</b><span>强日晒标签触发</span></div><span class="pill sun">建议带</span></div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab active"><img src="../../entry/src/main/resources/base/media/tb_icon_board.png" alt="">看板</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_bag.png" alt="">清单</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_clock.png" alt="">规则</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt="">我的</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="screen-block">
+        <div class="screen-label"><b>03 清单编辑</b><span>本地保存</span></div>
+        <div class="phone">
+          <div class="status"><span>7:28</span><span>100%</span></div>
+          <div class="content">
+            <div class="top">
+              <div class="brand"><span class="brand-mark">包</span>我的清单</div>
+              <span class="tiny-button">新增</span>
+            </div>
+            <div class="memo-card hero">
+              <p class="kicker">PACKING</p>
+              <h2 class="headline">把“每天都忘”的东西固定下来。</h2>
+              <p class="subtext">每个物品都可以设置启用状态、分类和触发条件。首版不做账号同步，只保存在本机。</p>
+            </div>
+            <div class="section-title">固定项<span>默认展示</span></div>
+            <div class="list">
+              <div class="item"><span class="check">✓</span><div class="item-text"><b>工牌</b><span>工作日 · 重要</span></div><span class="pill">启用</span></div>
+              <div class="item"><span class="check">✓</span><div class="item-text"><b>钥匙</b><span>每天 · 出门前</span></div><span class="pill">启用</span></div>
+              <div class="item"><span class="check">✓</span><div class="item-text"><b>耳机</b><span>通勤 · 可选</span></div><span class="pill">启用</span></div>
+            </div>
+            <div class="section-title">场景项<span>按标签出现</span></div>
+            <div class="list">
+              <div class="item"><span class="check open">?</span><div class="item-text"><b>雨伞</b><span>雨天标签</span></div><span class="pill warn">场景</span></div>
+              <div class="item"><span class="check open">?</span><div class="item-text"><b>防晒</b><span>强日晒标签</span></div><span class="pill sun">场景</span></div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_board.png" alt="">看板</div>
+            <div class="tab active"><img src="../../entry/src/main/resources/base/media/tb_icon_bag.png" alt="">清单</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_clock.png" alt="">规则</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt="">我的</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="screen-block">
+        <div class="screen-label"><b>04 提醒规则</b><span>透明触发</span></div>
+        <div class="phone">
+          <div class="status"><span>7:29</span><span>100%</span></div>
+          <div class="content">
+            <div class="top">
+              <div class="brand"><span class="brand-mark">铃</span>提醒规则</div>
+              <span class="tiny-button">排序</span>
+            </div>
+            <div class="memo-card hero">
+              <p class="kicker">RULES</p>
+              <h2 class="headline">提醒必须说清楚为什么出现。</h2>
+              <p class="subtext">不根据假天气做判断。每条提醒都来自用户设置、手动标签或本机日历。</p>
+            </div>
+            <div class="section-title">今日场景标签<span>用户选择</span></div>
+            <div class="tiles">
+              <div class="tile"><img src="../../entry/src/main/resources/base/media/tb_icon_umbrella.png" alt=""><b>雨天</b><em>打开后显示雨具项</em></div>
+              <div class="tile"><img src="../../entry/src/main/resources/base/media/tb_icon_bag.png" alt=""><b>强日晒</b><em>打开后显示遮阳项</em></div>
+            </div>
+            <div class="section-title">规则列表<span>本地规则</span></div>
+            <div class="rule-card"><img src="../../entry/src/main/resources/base/media/tb_icon_clock.png" alt=""><div><b>出门前 20 分钟</b><span>推送未确认清单项，用户可关闭。</span></div></div>
+            <div class="rule-card"><img src="../../entry/src/main/resources/base/media/tb_icon_umbrella.png" alt=""><div><b>雨天标签</b><span>把雨伞、鞋套、文件袋加入今日提醒。</span></div></div>
+            <div class="rule-card"><img src="../../entry/src/main/resources/base/media/tb_icon_bottle.png" alt=""><div><b>每天固定项</b><span>水杯、工牌、钥匙默认进入今日看板。</span></div></div>
+          </div>
+          <div class="tabbar">
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_board.png" alt="">看板</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_bag.png" alt="">清单</div>
+            <div class="tab active"><img src="../../entry/src/main/resources/base/media/tb_icon_clock.png" alt="">规则</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt="">我的</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="screen-block">
+        <div class="screen-label"><b>05 我的/设置</b><span>去地图化</span></div>
+        <div class="phone">
+          <div class="status"><span>7:31</span><span>100%</span></div>
+          <div class="content">
+            <div class="top">
+              <div class="brand"><span class="brand-mark">我</span>我的出门板</div>
+              <span class="tiny-button">备份</span>
+            </div>
+            <div class="memo-card hero">
+              <p class="kicker">LOCAL ONLY</p>
+              <h2 class="headline">所有配置只放在本机。</h2>
+              <p class="subtext">没有账号、没有后端、没有地图 Key。天气能力首版只保留未来入口，不参与提醒判断。</p>
+            </div>
+            <div class="section-title">设置项<span>首版范围</span></div>
+            <div class="memo-card">
+              <div class="switch-row"><div><b>日历权限</b><span>可用于出门前提醒时间，不读取天气</span></div><div class="switch"></div></div>
+              <div class="switch-row"><div><b>桌面服务卡片</b><span>同步未确认清单和今日标签</span></div><div class="switch"></div></div>
+              <div class="switch-row"><div><b>实时天气</b><span>首版不接入，显示为未启用</span></div><span class="pill warn">未启用</span></div>
+            </div>
+            <div class="section-title">已移除<span>不再展示</span></div>
+            <div class="list">
+              <div class="item"><span class="check">✓</span><div class="item-text"><b>地图 Key 配置</b><span>取消地图搜索和路线能力</span></div><span class="pill">已移除</span></div>
+              <div class="item"><span class="check">✓</span><div class="item-text"><b>家/公司地址搜索</b><span>不再请求高德 Web 服务</span></div><span class="pill">已移除</span></div>
+            </div>
+          </div>
+          <div class="tabbar">
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_board.png" alt="">看板</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_bag.png" alt="">清单</div>
+            <div class="tab"><img src="../../entry/src/main/resources/base/media/tb_icon_clock.png" alt="">规则</div>
+            <div class="tab active"><img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt="">我的</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="screen-block">
+        <div class="screen-label"><b>06 桌面卡片</b><span>抬手确认</span></div>
+        <div class="phone small">
+          <div class="status"><span>7:32</span><span>100%</span></div>
+          <div class="content no-tab">
+            <div class="top">
+              <div class="brand"><span class="brand-mark">卡</span>服务卡片</div>
+              <span class="tiny-button">2x2</span>
+            </div>
+            <div class="widget-shell">
+              <div class="widget-title"><span>今日出门板</span><span>7:32</span></div>
+              <h2 class="widget-big">还差 3 件</h2>
+              <p class="subtext">桌面只显示最关键提醒，不展示地图、不展示假天气。</p>
+              <div class="widget-list">
+                <div class="widget-line"><span>水杯</span><span>待确认</span></div>
+                <div class="widget-line"><span>防晒</span><span>强日晒</span></div>
+                <div class="widget-line"><span>充电器</span><span>低电量</span></div>
+              </div>
+            </div>
+            <div class="footer-note" style="font-size:11px;margin-top:18px;padding:12px;">
+              点击卡片进入今日首页；确认状态来自本机清单，不需要后端同步。
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="footer-note">
+      设计验收口径：整套界面不出现地图、路线、导航、实时天气数值或第三方 Key。天气只作为未来能力状态说明；当前提醒来自用户本地清单、手动场景标签和可选日历时间。
+    </section>
+  </main>
+</body>
+</html>

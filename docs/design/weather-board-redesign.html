@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>天气看门板 · 无后端版设计稿</title>
+  <style>
+    :root {
+      --bg: #dff1ff;
+      --bg-deep: #8dcbff;
+      --glass: rgba(250, 254, 255, 0.72);
+      --glass-strong: rgba(255, 255, 255, 0.84);
+      --line: rgba(255, 255, 255, 0.92);
+      --shadow: rgba(42, 92, 132, 0.16);
+      --blue: #2a73c9;
+      --blue-soft: #edf6ff;
+      --text: #174780;
+      --muted: #7390b1;
+      --green: #26bf86;
+      --orange: #f3a535;
+      --purple: #9a6cff;
+      --warm: #fff3dc;
+      --font: "HarmonyOS Sans SC", "PingFang SC", "Avenir Next", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 14%, rgba(255, 255, 255, 0.9), transparent 18%),
+        radial-gradient(circle at 88% 8%, rgba(255, 244, 209, 0.66), transparent 12%),
+        linear-gradient(180deg, #90d0ff 0%, #d5efff 44%, #eff9ff 100%);
+    }
+
+    .board {
+      width: 1680px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 42px 48px 64px;
+    }
+
+    .headline {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 28px;
+    }
+
+    .headline h1,
+    .headline p,
+    .headline h2,
+    .headline span,
+    .screen h3,
+    .screen p {
+      margin: 0;
+    }
+
+    .headline h1 {
+      font-size: 42px;
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .headline p {
+      margin-top: 10px;
+      font-size: 17px;
+      color: rgba(23, 71, 128, 0.76);
+    }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: 720px;
+    }
+
+    .meta span {
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(10px);
+      font-size: 13px;
+      color: rgba(23, 71, 128, 0.88);
+    }
+
+    .canvas {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .screen-block {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+    }
+
+    .screen-label {
+      width: 330px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: rgba(23, 71, 128, 0.72);
+    }
+
+    .screen-label b {
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .phone {
+      position: relative;
+      width: 330px;
+      height: 710px;
+      overflow: hidden;
+      border-radius: 40px;
+      border: 8px solid #202b33;
+      box-shadow: 0 38px 80px rgba(30, 70, 98, 0.25);
+      background:
+        radial-gradient(circle at 24% 10%, rgba(255, 255, 255, 0.92), transparent 20%),
+        url("../../entry/src/main/resources/base/media/tb_home_background.png") center top / cover no-repeat,
+        linear-gradient(180deg, #90d0ff 0%, #dff3ff 100%);
+    }
+
+    .safe {
+      height: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px 0;
+      color: rgba(28, 66, 102, 0.68);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .content {
+      height: calc(100% - 22px);
+      padding: 12px 12px 86px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .content::-webkit-scrollbar {
+      display: none;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .brand i {
+      width: 4px;
+      height: 20px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .glass {
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: var(--glass);
+      box-shadow: 0 20px 44px var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero {
+      padding: 18px 18px 14px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.54);
+      font-size: 11px;
+      font-weight: 800;
+      color: #4b8bff;
+    }
+
+    .hero h2 {
+      font-size: 30px;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .hero h2 .accent {
+      color: #4e8fff;
+    }
+
+    .hero p {
+      margin-top: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: rgba(23, 71, 128, 0.82);
+    }
+
+    .weather-box {
+      text-align: right;
+      min-width: 108px;
+    }
+
+    .weather-box .state {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .weather-box .value {
+      margin-top: 2px;
+      font-size: 28px;
+      font-weight: 900;
+      color: #4e8fff;
+      line-height: 1;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .metric {
+      padding: 14px 12px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.62);
+      text-align: center;
+    }
+
+    .metric .label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .metric .value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .metric small {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .notice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.56);
+      font-size: 12px;
+      color: rgba(23, 71, 128, 0.88);
+    }
+
+    .notice .dot {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(38, 191, 134, 0.16);
+      color: var(--green);
+      font-weight: 900;
+      font-size: 16px;
+      flex: none;
+    }
+
+    .section {
+      margin-top: 12px;
+      padding: 14px 14px 12px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-head h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      line-height: 1;
+    }
+
+    .section-head h3 i {
+      width: 4px;
+      height: 16px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .section-head span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .weather-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .weather-card {
+      padding: 12px 10px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.62);
+      min-height: 118px;
+      text-align: center;
+    }
+
+    .weather-card img,
+    .check-item img,
+    .nav-item img,
+    .rule-icon img,
+    .setting-icon img {
+      width: 56px;
+      height: 56px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .weather-card .title,
+    .check-item .title,
+    .nav-item .title {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .weather-card .desc,
+    .check-item .desc,
+    .nav-item .desc {
+      margin-top: 6px;
+      font-size: 11px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
+    .weather-card.umbrella {
+      box-shadow: inset 0 0 0 2px rgba(76, 141, 255, 0.45);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline-item,
+    .rule-row,
+    .setting-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .time-pill {
+      min-width: 62px;
+      padding: 10px 0;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.82);
+      text-align: center;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .timeline-item strong,
+    .rule-row strong,
+    .setting-row strong {
+      display: block;
+      font-size: 16px;
+      line-height: 1.15;
+    }
+
+    .timeline-item p,
+    .rule-row p,
+    .setting-row p {
+      margin-top: 5px;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .badge {
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      color: #fff;
+      background: linear-gradient(135deg, #4c8dff 0%, #6aabff 100%);
+    }
+
+    .badge.orange {
+      background: linear-gradient(135deg, #f3a535 0%, #f7c05e 100%);
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .check-item {
+      padding: 14px 10px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.62);
+      text-align: center;
+      min-height: 148px;
+    }
+
+    .check-item .status {
+      margin: 8px auto 0;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(38, 191, 134, 0.14);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .warm-tip {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 20px;
+      background: rgba(255, 243, 220, 0.84);
+      color: #c28518;
+      font-size: 12px;
+      line-height: 1.45;
+      box-shadow: inset 0 0 0 1px rgba(255, 220, 176, 0.7);
+    }
+
+    .rule-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .rule-icon,
+    .setting-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .setting-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .footer-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      padding: 7px 18px 10px;
+      border-radius: 26px 26px 32px 32px;
+      border: 1px solid var(--line);
+      border-left: 0;
+      border-right: 0;
+      border-bottom: 0;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 18px 34px rgba(52, 88, 118, 0.14);
+      backdrop-filter: blur(18px);
+    }
+
+    .footer-nav .nav-item {
+      display: grid;
+      justify-items: center;
+      gap: 3px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .footer-nav .nav-item img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .footer-nav .nav-item .title {
+      margin-top: 0;
+      font-size: 11px;
+      line-height: 12px;
+    }
+
+    .footer-nav .nav-item.active {
+      color: #4c8dff;
+      font-weight: 900;
+    }
+
+    .legend {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 16px;
+    }
+
+    .legend-card {
+      padding: 18px 20px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.56);
+      box-shadow: 0 20px 40px rgba(42, 92, 132, 0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    .legend-card h3 {
+      font-size: 20px;
+    }
+
+    .legend-card p {
+      margin-top: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(23, 71, 128, 0.8);
+    }
+
+    .legend-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .legend-chip {
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.68);
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba(23, 71, 128, 0.86);
+    }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <div class="headline">
+      <div>
+        <h1>天气看门板</h1>
+        <p>不依赖后端，不接地图，不做出行决策，专注晨间天气提醒、日程感知和出门清单。</p>
+      </div>
+      <div class="meta">
+        <span>数据策略：系统天气可选 + 手动天气标签</span>
+        <span>核心场景：起床后到出门前 15 分钟</span>
+        <span>主视觉：天空玻璃 + 大标题 + 低压缩信息块</span>
+      </div>
+    </div>
+
+    <div class="canvas">
+      <div class="screen-block">
+        <div class="screen-label"><b>首页看板</b><span>天气结论 + 今日提醒 + 清单预览</span></div>
+        <div class="phone">
+          <div class="safe"><span>09:41</span><span>5G 91%</span></div>
+          <div class="content">
+            <div class="topbar">
+              <div class="brand"><i></i><span>今日看门板</span></div>
+              <span style="font-size:12px;color:var(--muted);font-weight:800;">上班日 08:30</span>
+            </div>
+
+            <div class="glass hero">
+              <div class="hero-top">
+                <div>
+                  <div class="pill">推荐提醒：今天带伞</div>
+                  <h2>现在更适合 <span class="accent">轻装出门</span></h2>
+                  <p>上午有短时阵雨，体感偏闷。先把雨伞、水杯、工牌放进包里，避免临走前翻找。</p>
+                </div>
+                <div class="weather-box">
+                  <div class="state">系统天气已接入</div>
+                  <div class="value">24°C</div>
+                  <div class="state">多云转小雨</div>
+                </div>
+              </div>
+
+              <div class="metrics">
+                <div class="metric">
+                  <div class="label">出门前检查</div>
+                  <div class="value">4<small>项</small></div>
+                </div>
+                <div class="metric">
+                  <div class="label">最近日程</div>
+                  <div class="value">08:30</div>
+                </div>
+                <div class="metric">
+                  <div class="label">降雨窗口</div>
+                  <div class="value">10:20</div>
+                </div>
+              </div>
+
+              <div class="notice">
+                <div class="dot">!</div>
+                <div>午后气温会上升，薄外套可以不带；但中午前后有雨，雨伞别省。</div>
+              </div>
+            </div>
+
+            <div class="glass section">
+              <div class="section-head">
+                <h3><i></i>天气提醒</h3>
+                <span>规则命中 3 条</span>
+              </div>
+              <div class="weather-grid">
+                <div class="weather-card umbrella">
+                  <img src="../../entry/src/main/resources/base/media/tb_icon_umbrella.png" alt="">
+                  <div class="title">带雨伞</div>
+                  <div class="desc">10:20 之后有短时阵雨</div>
+                </div>
+                <div class="weather-card">
+                  <img src="../../entry/src/main/resources/base/media/tb_icon_bottle.png" alt="">
+                  <div class="title">带水杯</div>
+                  <div class="desc">体感闷热，补水频率上升</div>
+                </div>
+                <div class="weather-card">
+                  <img src="../../entry/src/main/resources/base/media/tb_icon_earphones.png" alt="">
+                  <div class="title">静音耳机</div>
+                  <div class="desc">上午连着两场会，路上先切安静</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass section">
+              <div class="section-head">
+                <h3><i></i>今日时间线</h3>
+                <span>系统日历</span>
+              </div>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="time-pill">08:30</div>
+                  <div>
+                    <strong>周会站会</strong>
+                    <p>出门前把工牌、电脑、电源确认一遍，别把脑力都花在补忘上。</p>
+                  </div>
+                  <div class="badge">最重要</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="time-pill">10:20</div>
+                  <div>
+                    <strong>阵雨提醒</strong>
+                    <p>如果还在外面，优先走室内连廊；如果已经到办公室，雨伞放门边。</p>
+                  </div>
+                  <div class="badge orange">天气</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-nav">
+            <div class="nav-item active">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_board.png" alt="">
+              <div class="title">看板</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_badge.png" alt="">
+              <div class="title">清单</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_discover.png" alt="">
+              <div class="title">提醒</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt="">
+              <div class="title">我的</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen-block">
+        <div class="screen-label"><b>清单页</b><span>出门物品 + 场景化模板</span></div>
+        <div class="phone">
+          <div class="safe"><span>09:41</span><span>5G 91%</span></div>
+          <div class="content">
+            <div class="topbar">
+              <div class="brand"><i></i><span>出门清单</span></div>
+              <span style="font-size:12px;color:var(--muted);font-weight:800;">工作日模板</span>
+            </div>
+
+            <div class="glass hero" style="padding-bottom:16px;">
+              <div class="pill">今日已命中：雨天工作日</div>
+              <h2>这次先别忘了 <span class="accent">雨伞和工牌</span></h2>
+              <p>晴天、下雨、加班、周末都能配自己的清单模板，晨间看板只把今天需要的顶出来。</p>
+            </div>
+
+            <div class="glass section">
+              <div class="section-head">
+                <h3><i></i>今日必带</h3>
+                <span>已完成 2/5</span>
+              </div>
+              <div class="check-grid">
+                <div class="check-item">
+                  <img src="../../entry/src/main/resources/base/media/tb_icon_badge.png" alt="">
+                  <div class="title">工牌</div>
+                  <div class="desc">上午站会 + 门禁</div>
+                  <div class="status">✓</div>
+                </div>
+                <div class="check-item">
+                  <img src="../../entry/src/main/resources/base/media/tb_icon_umbrella.png" alt="">
+                  <div class="title">雨伞</div>
+                  <div class="desc">10:20 后短时阵雨</div>
+                  <div class="status">✓</div>
+                </div>
+                <div class="check-item">
+                  <img src="../../entry/src/main/resources/base/media/tb_icon_bottle.png" alt="">
+                  <div class="title">水杯</div>
+                  <div class="desc">体感闷热，记得补水</div>
+                  <div class="status">○</div>
+                </div>
+                <div class="check-item">
+                  <img src="../../entry/src/main/resources/base/media/tb_icon_bag.png" alt="">
+                  <div class="title">电脑包</div>
+                  <div class="desc">含电脑、电源、钥匙</div>
+                  <div class="status">○</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="warm-tip">今日规则：下雨自动加入雨伞；气温 ≥ 26°C 自动加入水杯；首条日历含“客户”时自动提示纸质工牌。</div>
+
+            <div class="glass section">
+              <div class="section-head">
+                <h3><i></i>清单模板</h3>
+                <span>4 套</span>
+              </div>
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="time-pill">默认</div>
+                  <div>
+                    <strong>工作日通勤</strong>
+                    <p>工牌、耳机、水杯、电脑包。是每天早上默认展开的基础模板。</p>
+                  </div>
+                  <div class="badge">启用中</div>
+                </div>
+                <div class="timeline-item">
+                  <div class="time-pill">天气</div>
+                  <div>
+                    <strong>雨天增强</strong>
+                    <p>额外插入雨伞、纸巾、防水袋，不额外创建页面，只在今天命中时顶到看板。</p>
+                  </div>
+                  <div class="badge orange">规则</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-nav">
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_board.png" alt="">
+              <div class="title">看板</div>
+            </div>
+            <div class="nav-item active">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_badge.png" alt="">
+              <div class="title">清单</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_discover.png" alt="">
+              <div class="title">提醒</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt="">
+              <div class="title">我的</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen-block">
+        <div class="screen-label"><b>提醒页</b><span>天气规则 + 日程规则 + 命中历史</span></div>
+        <div class="phone">
+          <div class="safe"><span>09:41</span><span>5G 91%</span></div>
+          <div class="content">
+            <div class="topbar">
+              <div class="brand"><i></i><span>提醒规则</span></div>
+              <span style="font-size:12px;color:var(--muted);font-weight:800;">本地规则引擎</span>
+            </div>
+
+            <div class="glass hero" style="padding-bottom:16px;">
+              <div class="pill">无后端版核心价值</div>
+              <h2>让提醒自己 <span class="accent">长出来</span></h2>
+              <p>天气、日历、时间、手动标签都可以触发本地提醒。我们不做复杂推送，先把晨间 15 分钟做透。</p>
+            </div>
+
+            <div class="glass section">
+              <div class="section-head">
+                <h3><i></i>天气规则</h3>
+                <span>3 条启用</span>
+              </div>
+              <div class="rule-list">
+                <div class="rule-row">
+                  <div class="rule-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_umbrella.png" alt=""></div>
+                  <div>
+                    <strong>下雨就把雨伞放到首页第一位</strong>
+                    <p>当系统天气为雨，或手动天气标签选择“下雨”时命中。</p>
+                  </div>
+                  <div class="badge">启用</div>
+                </div>
+                <div class="rule-row">
+                  <div class="rule-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_bottle.png" alt=""></div>
+                  <div>
+                    <strong>气温升高时提醒带水杯</strong>
+                    <p>温度大于等于 26°C 时命中；没有真实天气时这条静默不显示。</p>
+                  </div>
+                  <div class="badge">启用</div>
+                </div>
+                <div class="rule-row">
+                  <div class="rule-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_walk.png" alt=""></div>
+                  <div>
+                    <strong>大风天取消轻便穿搭建议</strong>
+                    <p>避免首页给出“轻装出门”的误导结论，只保留安全提醒。</p>
+                  </div>
+                  <div class="badge orange">谨慎</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass section">
+              <div class="section-head">
+                <h3><i></i>日程规则</h3>
+                <span>系统日历</span>
+              </div>
+              <div class="rule-list">
+                <div class="rule-row">
+                  <div class="rule-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_itinerary.png" alt=""></div>
+                  <div>
+                    <strong>首条重要日程顶到首页第二屏</strong>
+                    <p>只展示今天最重要的 1 到 2 条，避免把首页做成碎片流。</p>
+                  </div>
+                  <div class="badge">启用</div>
+                </div>
+                <div class="rule-row">
+                  <div class="rule-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_earphones.png" alt=""></div>
+                  <div>
+                    <strong>日历标题含“会”时提示耳机</strong>
+                    <p>让提醒更像一个知道你日常习惯的晨间小板，而不是天气播报器。</p>
+                  </div>
+                  <div class="badge">启用</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-nav">
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_board.png" alt="">
+              <div class="title">看板</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_badge.png" alt="">
+              <div class="title">清单</div>
+            </div>
+            <div class="nav-item active">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_discover.png" alt="">
+              <div class="title">提醒</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt="">
+              <div class="title">我的</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen-block">
+        <div class="screen-label"><b>我的设置</b><span>权限、天气源、主题和静默时段</span></div>
+        <div class="phone">
+          <div class="safe"><span>09:41</span><span>5G 91%</span></div>
+          <div class="content">
+            <div class="topbar">
+              <div class="brand"><i></i><span>我的设置</span></div>
+              <span style="font-size:12px;color:var(--muted);font-weight:800;">完全本地</span>
+            </div>
+
+            <div class="glass hero" style="padding-bottom:16px;">
+              <div class="pill">策略优先级</div>
+              <h2>真实天气优先，拿不到就 <span class="accent">显式切手动</span></h2>
+              <p>我们不偷偷补假数据。系统天气可用就用，不可用就让用户主动切“手动天气标签”。</p>
+            </div>
+
+            <div class="glass section">
+              <div class="section-head">
+                <h3><i></i>数据来源</h3>
+                <span>无后端</span>
+              </div>
+              <div class="setting-list">
+                <div class="setting-row">
+                  <div class="setting-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_umbrella.png" alt=""></div>
+                  <div>
+                    <strong>系统天气</strong>
+                    <p>依赖设备系统能力。能拿到就直接接入；拿不到时只显示“未接入”。</p>
+                  </div>
+                  <div class="badge orange">可选</div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_home.png" alt=""></div>
+                  <div>
+                    <strong>手动天气标签</strong>
+                    <p>晴 / 雨 / 降温 / 大风四种简化标签，作为用户主动输入，不是假数据。</p>
+                  </div>
+                  <div class="badge">默认兜底</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass section">
+              <div class="section-head">
+                <h3><i></i>权限与偏好</h3>
+                <span>最小权限</span>
+              </div>
+              <div class="setting-list">
+                <div class="setting-row">
+                  <div class="setting-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_itinerary.png" alt=""></div>
+                  <div>
+                    <strong>日历权限</strong>
+                    <p>只读今天重要日程，不做账号同步，不上传任何标题内容。</p>
+                  </div>
+                  <div class="badge">已授权</div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_settings.png" alt=""></div>
+                  <div>
+                    <strong>晨间静默时段</strong>
+                    <p>只在早上 6:30 - 9:30 渲染重点提醒，其余时段缩成简版看板。</p>
+                  </div>
+                  <div class="badge">已开启</div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-icon"><img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt=""></div>
+                  <div>
+                    <strong>主题风格</strong>
+                    <p>默认天空玻璃；后续可扩展暖纸板、深夜值守板，但第一版先做一套打磨透。</p>
+                  </div>
+                  <div class="badge">默认</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-nav">
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_board.png" alt="">
+              <div class="title">看板</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_badge.png" alt="">
+              <div class="title">清单</div>
+            </div>
+            <div class="nav-item">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_discover.png" alt="">
+              <div class="title">提醒</div>
+            </div>
+            <div class="nav-item active">
+              <img src="../../entry/src/main/resources/base/media/tb_icon_profile.png" alt="">
+              <div class="title">我的</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-card">
+        <h3>产品判断</h3>
+        <p>这条线是可行的，但要换核心定义。不要再把“真实天气 + 地图 + 出行决策”绑成一个主链路，而是把 App 定义成“晨间看门板”。这样后端和地图都可以完全拿掉，天气只作为增强信号，清单和日程才是稳定主能力。</p>
+      </div>
+      <div class="legend-card">
+        <h3>设计规则</h3>
+        <div class="legend-grid">
+          <div class="legend-chip">首页只讲一个结论：今天带什么、注意什么。</div>
+          <div class="legend-chip">天气页不做播报器，重点是规则触发和提醒命中。</div>
+          <div class="legend-chip">图标、标题、副文案都走固定槽位，避免再出现错位。</div>
+          <div class="legend-chip">第一版只保留一套“天空玻璃”视觉，把细节做透。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

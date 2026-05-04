@@ -1,0 +1,40 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "天气看门板入口模块"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "天气看门板主能力"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "天气看门板"
+    },
+    {
+      "name": "calendar_permission_reason",
+      "value": "用于读取今天第一条日程并在看板中显示"
+    },
+    {
+      "name": "location_permission_reason",
+      "value": "用于获取当前位置并刷新本地天气"
+    },
+    {
+      "name": "today_board_form_name",
+      "value": "天气看门板"
+    },
+    {
+      "name": "today_board_form_ability_label",
+      "value": "天气看门板卡片"
+    },
+    {
+      "name": "today_board_form_ability_description",
+      "value": "天气看门板服务卡片扩展"
+    },
+    {
+      "name": "today_board_form_description",
+      "value": "显示今天的天气、日程和出门清单状态"
+    }
+  ]
+}

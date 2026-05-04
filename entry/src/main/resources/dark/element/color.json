@@ -1,0 +1,28 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#1C2822"
+    },
+    {
+      "name": "brand_primary",
+      "value": "#F2A36D"
+    },
+    {
+      "name": "text_primary",
+      "value": "#FFF6E7"
+    },
+    {
+      "name": "text_secondary",
+      "value": "#D9C7AD"
+    },
+    {
+      "name": "chip_background",
+      "value": "#2B3E35"
+    },
+    {
+      "name": "warning_soft_background",
+      "value": "#51321F"
+    }
+  ]
+}
