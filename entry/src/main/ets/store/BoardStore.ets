@@ -1,3 +1,6 @@
+import { common } from '@kit.AbilityKit';
+import { preferences } from '@kit.ArkData';
+
 export type ChecklistIconName =
   'bag' | 'badge' | 'phone' | 'key' | 'headphones' | 'cup' | 'umbrella' |
   'wallet' | 'tissue' | 'mask' | 'battery' | 'medicine';
@@ -19,6 +22,8 @@ export class BoardStore {
   static readonly KEY_CHECKLIST_ITEMS: string = 'board.checklistItems';
   static readonly KEY_LEGACY_CHECKLIST_TEXT: string = 'board.checklistText';
   static readonly KEY_COMPLETED: string = 'board.completed';
+  private static readonly PREFERENCES_NAME: string = 'today_board';
+  private static preferencesStore?: preferences.Preferences;
 
   static readonly DEFAULT_CHECKLIST_ITEMS: ChecklistItem[] = [
     { id: 'preset-badge', label: '工牌', icon: 'badge', selected: true, custom: false },
@@ -34,12 +39,15 @@ export class BoardStore {
   ];
   static readonly DEFAULT_CHECKLIST_ITEMS_JSON: string = JSON.stringify(BoardStore.DEFAULT_CHECKLIST_ITEMS);
 
-  static initialize(): void {
+  static initialize(hostContext?: common.Context): void {
     PersistentStorage.persistProps([
       { key: BoardStore.KEY_CHECKLIST_ITEMS, defaultValue: '' },
       { key: BoardStore.KEY_LEGACY_CHECKLIST_TEXT, defaultValue: '' },
       { key: BoardStore.KEY_COMPLETED, defaultValue: true }
     ]);
+    if (hostContext) {
+      BoardStore.bindPreferences(hostContext);
+    }
     BoardStore.ensureChecklistItems();
   }
 
@@ -146,8 +154,49 @@ export class BoardStore {
 
   private static saveChecklistItems(items: ChecklistItem[]): void {
     const normalizedItems = BoardStore.normalizeChecklistItems(items);
-    AppStorage.set(BoardStore.KEY_CHECKLIST_ITEMS, JSON.stringify(normalizedItems));
+    const itemsJson = JSON.stringify(normalizedItems);
+    AppStorage.set(BoardStore.KEY_CHECKLIST_ITEMS, itemsJson);
     AppStorage.set(BoardStore.KEY_COMPLETED, normalizedItems.some((item: ChecklistItem): boolean => item.selected));
+    BoardStore.persistChecklistItems(itemsJson, normalizedItems);
+  }
+
+  private static bindPreferences(hostContext: common.Context): void {
+    if (!BoardStore.preferencesStore) {
+      BoardStore.preferencesStore = preferences.getPreferencesSync(hostContext, {
+        name: BoardStore.PREFERENCES_NAME
+      });
+    }
+    const storedItemsJson = BoardStore.readPersistedChecklistItems();
+    if (storedItemsJson.trim().length > 0) {
+      const restoredItems = BoardStore.normalizeChecklistItems(JSON.parse(storedItemsJson) as ChecklistItem[]);
+      AppStorage.set(BoardStore.KEY_CHECKLIST_ITEMS, JSON.stringify(restoredItems));
+      AppStorage.set(BoardStore.KEY_COMPLETED, restoredItems.some((item: ChecklistItem): boolean => item.selected));
+      return;
+    }
+
+    const appStorageItemsJson = BoardStore.getString(BoardStore.KEY_CHECKLIST_ITEMS);
+    if (appStorageItemsJson.trim().length > 0) {
+      const appStorageItems = BoardStore.normalizeChecklistItems(JSON.parse(appStorageItemsJson) as ChecklistItem[]);
+      BoardStore.persistChecklistItems(JSON.stringify(appStorageItems), appStorageItems);
+    }
+  }
+
+  private static persistChecklistItems(itemsJson: string, items: ChecklistItem[]): void {
+    if (!BoardStore.preferencesStore) {
+      return;
+    }
+    BoardStore.preferencesStore.putSync(BoardStore.KEY_CHECKLIST_ITEMS, itemsJson);
+    BoardStore.preferencesStore.putSync(BoardStore.KEY_COMPLETED,
+      items.some((item: ChecklistItem): boolean => item.selected));
+    BoardStore.preferencesStore.flushSync();
+  }
+
+  private static readPersistedChecklistItems(): string {
+    if (!BoardStore.preferencesStore) {
+      return '';
+    }
+    const storedValue = BoardStore.preferencesStore.getSync(BoardStore.KEY_CHECKLIST_ITEMS, '');
+    return typeof storedValue === 'string' ? storedValue : '';
   }
 
   private static createChecklistItemsFromText(text: string): ChecklistItem[] {

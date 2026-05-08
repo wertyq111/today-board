@@ -75,12 +75,56 @@ export class LocationService {
       abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
 
     if ((!accuratePermissionGranted || !approximatePermissionGranted) && requestPermission) {
-      const permissionResult = await atManager.requestPermissionsFromUser(hostContext, [
-        LocationService.ACCURATE_LOCATION_PERMISSION,
-        LocationService.APPROXIMATE_LOCATION_PERMISSION
-      ]);
-      accuratePermissionGranted = permissionResult.authResults[0] === 0;
-      approximatePermissionGranted = permissionResult.authResults[1] === 0;
+      const accuratePermissionStatus = atManager.getSelfPermissionStatus(LocationService.ACCURATE_LOCATION_PERMISSION);
+      const approximatePermissionStatus =
+        atManager.getSelfPermissionStatus(LocationService.APPROXIMATE_LOCATION_PERMISSION);
+      let requestedFromUser = false;
+      if (accuratePermissionStatus === abilityAccessCtrl.PermissionStatus.NOT_DETERMINED &&
+        approximatePermissionStatus === abilityAccessCtrl.PermissionStatus.NOT_DETERMINED) {
+        requestedFromUser = true;
+        const permissionResult = await atManager.requestPermissionsFromUser(hostContext, [
+          LocationService.ACCURATE_LOCATION_PERMISSION,
+          LocationService.APPROXIMATE_LOCATION_PERMISSION
+        ]);
+        accuratePermissionGranted = permissionResult.authResults[0] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+        approximatePermissionGranted = permissionResult.authResults[1] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      } else if (accuratePermissionStatus === abilityAccessCtrl.PermissionStatus.NOT_DETERMINED) {
+        requestedFromUser = true;
+        const permissionResult =
+          await atManager.requestPermissionsFromUser(hostContext, [LocationService.ACCURATE_LOCATION_PERMISSION]);
+        accuratePermissionGranted = permissionResult.authResults[0] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      } else if (approximatePermissionStatus === abilityAccessCtrl.PermissionStatus.NOT_DETERMINED) {
+        requestedFromUser = true;
+        const permissionResult =
+          await atManager.requestPermissionsFromUser(hostContext, [LocationService.APPROXIMATE_LOCATION_PERMISSION]);
+        approximatePermissionGranted =
+          permissionResult.authResults[0] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      }
+
+      accuratePermissionGranted = atManager.checkAccessTokenSync(tokenId, LocationService.ACCURATE_LOCATION_PERMISSION) ===
+        abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      approximatePermissionGranted = atManager.checkAccessTokenSync(tokenId,
+        LocationService.APPROXIMATE_LOCATION_PERMISSION) === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      if (!requestedFromUser && !accuratePermissionGranted && !approximatePermissionGranted) {
+        const permissionResults = await atManager.requestPermissionOnSetting(hostContext, [
+          LocationService.ACCURATE_LOCATION_PERMISSION,
+          LocationService.APPROXIMATE_LOCATION_PERMISSION
+        ]);
+        accuratePermissionGranted = permissionResults[0] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+        approximatePermissionGranted = permissionResults[1] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      } else if (!requestedFromUser && !accuratePermissionGranted) {
+        const permissionResults =
+          await atManager.requestPermissionOnSetting(hostContext, [LocationService.ACCURATE_LOCATION_PERMISSION]);
+        accuratePermissionGranted = permissionResults[0] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      } else if (!requestedFromUser && !approximatePermissionGranted) {
+        const permissionResults =
+          await atManager.requestPermissionOnSetting(hostContext, [LocationService.APPROXIMATE_LOCATION_PERMISSION]);
+        approximatePermissionGranted = permissionResults[0] === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      }
+      accuratePermissionGranted = atManager.checkAccessTokenSync(tokenId, LocationService.ACCURATE_LOCATION_PERMISSION) ===
+        abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
+      approximatePermissionGranted = atManager.checkAccessTokenSync(tokenId,
+        LocationService.APPROXIMATE_LOCATION_PERMISSION) === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
     }
 
     if (!accuratePermissionGranted || !approximatePermissionGranted) {

@@ -2,9 +2,9 @@ import { AppBottomNav } from '../common/AppBottomNav';
 import { AppControlColors, AppControlTone, AppIconTile } from '../common/AppControls';
 import { AppIcon, AppIconMapper, AppIconName } from '../common/AppIcon';
 import { AppTheme } from '../common/AppTheme';
-import { CalendarService } from '../services/CalendarService';
-import { LocationService } from '../services/LocationService';
-import { WeatherService } from '../services/WeatherService';
+import { CalendarService, CalendarSnapshot } from '../services/CalendarService';
+import { LocationService, LocationSnapshot } from '../services/LocationService';
+import { WeatherService, WeatherSnapshot } from '../services/WeatherService';
 import { BoardStore } from '../store/BoardStore';
 
 @Entry
@@ -24,9 +24,9 @@ struct SettingsPage {
   private toastToken: number = 0;
 
   aboutToAppear(): void {
-    BoardStore.initialize();
+    const hostContext = this.getUIContext().getHostContext();
+    BoardStore.initialize(hostContext);
     void this.refreshCalendar(false);
-    void this.refreshLocation(false);
     void this.refreshWeather(false);
   }
 
@@ -37,9 +37,10 @@ struct SettingsPage {
       return;
     }
 
-    await CalendarService.refresh(hostContext, requestPermission);
+    const snapshot = await CalendarService.refresh(hostContext, requestPermission);
+    this.applyCalendarSnapshot(snapshot);
     if (requestPermission) {
-      this.showToast(CalendarService.getSnapshot().summary);
+      this.showToast(snapshot.summary);
     }
   }
 
@@ -50,9 +51,13 @@ struct SettingsPage {
       return;
     }
 
-    await LocationService.refresh(hostContext, requestPermission);
+    const snapshot = await LocationService.refresh(hostContext, requestPermission);
+    this.applyLocationSnapshot(snapshot);
+    const weatherSnapshot = await WeatherService.refresh(hostContext, false);
+    this.applyLocationSnapshot(LocationService.getSnapshot());
+    this.applyWeatherSnapshot(weatherSnapshot);
     if (requestPermission) {
-      this.showToast(LocationService.getSnapshot().summary);
+      this.showToast(snapshot.summary);
     }
   }
 
@@ -63,10 +68,30 @@ struct SettingsPage {
       return;
     }
 
-    await WeatherService.refresh(hostContext, requestLocationPermission);
+    const snapshot = await WeatherService.refresh(hostContext, requestLocationPermission);
+    this.applyLocationSnapshot(LocationService.getSnapshot());
+    this.applyWeatherSnapshot(snapshot);
     if (requestLocationPermission) {
-      this.showToast(WeatherService.getSnapshot().summary);
+      this.showToast(snapshot.summary);
     }
+  }
+
+  private applyCalendarSnapshot(snapshot: CalendarSnapshot): void {
+    this.calendarPermissionState = snapshot.permissionState;
+    this.calendarSyncState = snapshot.syncState;
+    this.calendarSummary = snapshot.summary;
+  }
+
+  private applyLocationSnapshot(snapshot: LocationSnapshot): void {
+    this.locationPermissionState = snapshot.permissionState;
+    this.locationSyncState = snapshot.syncState;
+    this.locationSummary = snapshot.summary;
+  }
+
+  private applyWeatherSnapshot(snapshot: WeatherSnapshot): void {
+    this.weatherSyncState = snapshot.syncState;
+    this.weatherSignal = snapshot.signal;
+    this.weatherSummary = snapshot.summary;
   }
 
   private getCalendarStateText(): string {
@@ -113,7 +138,7 @@ struct SettingsPage {
         return '晴天';
       }
       if (this.weatherSignal === 'cloudy') {
-        return '云天';
+        return '多云';
       }
       return '已接入';
     }
@@ -247,14 +272,16 @@ struct SettingsPage {
           .height(28)
           .backgroundColor(AppTheme.APPLE_ACTION_MUTED)
           .borderRadius(14)
-          .onClick(() => {
-            refreshHandler();
-          })
         }
       }
     }
     .width('100%')
     .padding({ left: 18, right: 18, top: 15, bottom: 15 })
+    .onClick(() => {
+      if (canRefresh) {
+        refreshHandler();
+      }
+    })
   }
 
   @Builder
@@ -277,15 +304,23 @@ struct SettingsPage {
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
       Scroll() {
-        Column({ space: 14 }) {
-          this.pageHeader()
-          this.statusGroup()
+        Row() {
+          Column({ space: 14 }) {
+            this.pageHeader()
+            this.statusGroup()
+          }
+          .width('100%')
+          .constraintSize({ maxWidth: AppTheme.PAGE_MAX_WIDTH })
+          .padding({ left: 16, right: 16, top: 34, bottom: 102 })
         }
         .width('100%')
-        .padding({ left: 16, right: 16, bottom: 102 })
+        .constraintSize({ minHeight: '100%' })
+        .alignItems(VerticalAlign.Top)
+        .justifyContent(FlexAlign.Center)
       }
       .width('100%')
       .height('100%')
+      .edgeEffect(EdgeEffect.Spring, { alwaysEnabled: true })
       .scrollBar(BarState.Off)
       .backgroundColor(AppTheme.APPLE_BACKGROUND)
 

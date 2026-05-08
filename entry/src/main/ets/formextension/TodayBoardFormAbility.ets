@@ -8,7 +8,7 @@ import { SetupStore } from '../store/SetupStore';
 
 export default class TodayBoardFormAbility extends FormExtensionAbility {
   onAddForm(want: Want): formBindingData.FormBindingData {
-    TodayBoardSnapshotService.initialize();
+    TodayBoardSnapshotService.initialize(this.context);
     const formId = this.getFormId(want);
     if (formId.length > 0) {
       void this.refreshAndUpdate(formId);
@@ -26,7 +26,7 @@ export default class TodayBoardFormAbility extends FormExtensionAbility {
   }
 
   private async refreshAndUpdate(formId: string): Promise<void> {
-    TodayBoardSnapshotService.initialize();
+    TodayBoardSnapshotService.initialize(this.context);
     if (SetupStore.isSetupCompleted()) {
       await CalendarService.refresh(this.context, false);
       await WeatherService.refresh(this.context, false);

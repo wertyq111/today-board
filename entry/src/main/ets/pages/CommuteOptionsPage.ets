@@ -430,6 +430,7 @@ struct CommuteOptionsPage {
       }
       .width('100%')
       .height('100%')
+      .edgeEffect(EdgeEffect.Spring, { alwaysEnabled: true })
       .scrollBar(BarState.Off)
       .backgroundColor('#00000000')
 

@@ -33,6 +33,8 @@ export class AppTheme {
 
   static readonly PAGE_PADDING: number = 20;
   static readonly SECTION_GAP: number = 14;
+  static readonly PAGE_MAX_WIDTH: number = 520;
+  static readonly NAV_MAX_WIDTH: number = 520;
   static readonly CARD_RADIUS: number = 22;
   static readonly CHIP_RADIUS: number = 16;
   static readonly HERO_RADIUS: number = 32;

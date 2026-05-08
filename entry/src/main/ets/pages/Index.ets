@@ -19,11 +19,26 @@ struct Index {
   @StorageLink('weather.summary') weatherSummary: string = '还没有刷新本地天气。';
   @State summaryCardActive: boolean = false;
   @State checklistCardActive: boolean = false;
+  @State pageVisible: boolean = true;
+  private weatherHeroVideoController: VideoController = new VideoController();
 
   aboutToAppear(): void {
-    BoardStore.initialize();
+    const hostContext = this.getUIContext().getHostContext();
+    BoardStore.initialize(hostContext);
     void this.refreshCalendar(false);
     void this.refreshWeather(false);
+  }
+
+  onPageShow(): void {
+    this.pageVisible = true;
+    if (this.shouldUseWeatherHeroVideo()) {
+      this.weatherHeroVideoController.start();
+    }
+  }
+
+  onPageHide(): void {
+    this.pageVisible = false;
+    this.weatherHeroVideoController.stop();
   }
 
   private getPageRouter() {
@@ -243,7 +258,7 @@ struct Index {
         return '晴天';
       }
       if (visualSignal === 'cloudy') {
-        return '云天';
+        return '多云';
       }
       return '天气已接入';
     }
@@ -270,7 +285,7 @@ struct Index {
       return '晴天';
     }
     if (visualSignal === 'cloudy') {
-      return '云天';
+      return '多云';
     }
     return '天气待接入';
   }
@@ -313,7 +328,7 @@ struct Index {
       return '雪';
     }
     if (visualSignal === 'cloudy') {
-      return '阴';
+      return '多云';
     }
     return '待接入';
   }
@@ -339,12 +354,13 @@ struct Index {
   weatherHeroVideo(source: Resource) {
     Video({
       src: source,
-      previewUri: this.getWeatherHeroImage()
+      previewUri: this.getWeatherHeroImage(),
+      controller: this.weatherHeroVideoController
     })
       .width('100%')
       .height(420)
       .objectFit(ImageFit.Cover)
-      .autoPlay(true)
+      .autoPlay(this.pageVisible)
       .muted(true)
       .loop(true)
       .controls(false)
@@ -665,14 +681,20 @@ struct Index {
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
       Scroll() {
-        Column({ space: 0 }) {
-          this.topWeatherSection()
+        Row() {
+          Column({ space: 0 }) {
+            this.topWeatherSection()
+          }
+          .width('100%')
+          .constraintSize({ maxWidth: AppTheme.PAGE_MAX_WIDTH })
         }
         .width('100%')
+        .justifyContent(FlexAlign.Center)
       }
       .width('100%')
       .height('100%')
       .margin({ bottom: 104 })
+      .edgeEffect(EdgeEffect.Spring, { alwaysEnabled: true })
       .scrollBar(BarState.Off)
       .backgroundColor(AppTheme.APPLE_BLACK)
 

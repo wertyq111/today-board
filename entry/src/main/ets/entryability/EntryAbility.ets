@@ -16,7 +16,7 @@ export default class EntryAbility extends UIAbility {
     } catch (err) {
       hilog.error(DOMAIN, 'testTag', 'Failed to set colorMode. Cause: %{public}s', JSON.stringify(err));
     }
-    BoardStore.initialize();
+    BoardStore.initialize(this.context);
     CalendarService.initialize();
     LocationService.initialize();
     WeatherService.initialize();
@@ -66,10 +66,17 @@ export default class EntryAbility extends UIAbility {
   onForeground(): void {
     // Ability has brought to foreground
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onForeground');
+    BoardStore.initialize(this.context);
+    void this.refreshSignals();
   }
 
   onBackground(): void {
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
+  }
+
+  private async refreshSignals(): Promise<void> {
+    await CalendarService.refresh(this.context, false);
+    await WeatherService.refresh(this.context, false);
   }
 }

@@ -39,6 +39,7 @@ flowchart LR
 | `BoardStore.ets` `AppIcon.ets` `Index.ets` `ChecklistPage.ets` `DiscoverPage.ets` `SettingsPage.ets` `TodayBoardSnapshotService.ets` `CalendarService.ets` | 已按“天气开通 + 看板去时间 + 标签式清单”落地：天气开通入口放到我的页，主路径不再保存/展示本机目标时间，清单改为预设/自定义图标标签 | 根目录 `assembleHap` 成功；旧时间、蓝色、旧 PNG 扫描通过；HDC 安装启动成功并抓图核对清单/我的页 | 是 |
 | `entry/src/main/resources/base/media/*` `entry/src/main/ets/pages/CommuteOptionsPage.ets` `docs/design/*` `scripts/*` | 已清理旧位图图标体系：删除不再使用的 `tb_icon_*`、`tb_nav_*`、`tb_feature_*`、`tb_item_*`、旧天气小图标、旧图标备份和恢复脚本；遗留通勤页改用 `AppIcon` 系统符号 | 资源引用脚本显示 missing refs 为 none；HAP 包内无旧图标资源；根目录 `assembleHap` 成功 | 是 |
 | `entry/src/main/ets/store/BoardStore.ets` `entry/src/main/ets/pages/Index.ets` `entry/src/main/ets/pages/DiscoverPage.ets` `entry/src/main/ets/pages/SettingsPage.ets` `entry/src/main/ets/common/AppIcon.ets` `entry/src/main/ets/components/WeatherAnimatedIcon.ets` `entry/src/main/ets/services/TodayBoardSnapshotService.ets` | 已移除手动天气标签完整链路，并让首页 Scroll 视口避开固定底栏 | `rg "ManualWeather|manualWeather"` 无命中；bootstrap `assembleHap` 成功；HDC 安装启动并截图验证 | 是 |
+| `entry/src/main/ets/pages/Index.ets` `ChecklistPage.ets` `DiscoverPage.ets` `SettingsPage.ets` `CommuteOptionsPage.ets` `SetupPage.ets` | 已修复 AppGallery 两项审核问题：隐藏首页时停止天气视频，所有页面滚动到边界时有回弹反馈 | 根目录 `assembleHap` 成功；bootstrap 页面已同步并编译到 `PackageHap`，签名仍被既有 keystore/JDK 问题阻断 | 是 |
 
 | 阶段 | files | action | verify | done |
 | --- | --- | --- | --- | --- |

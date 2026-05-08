@@ -1,3 +1,4 @@
+import { common } from '@kit.AbilityKit';
 import { CalendarService } from './CalendarService';
 import { LocationService } from './LocationService';
 import { WeatherService, WeatherSnapshot } from './WeatherService';
@@ -16,8 +17,8 @@ export interface TodayBoardCardData {
 }
 
 export class TodayBoardSnapshotService {
-  static initialize(): void {
-    BoardStore.initialize();
+  static initialize(hostContext?: common.Context): void {
+    BoardStore.initialize(hostContext);
     CalendarService.initialize();
     LocationService.initialize();
     WeatherService.initialize();
@@ -55,7 +56,7 @@ export class TodayBoardSnapshotService {
         return '晴天';
       }
       if (weather.signal === 'cloudy') {
-        return '云天';
+        return '多云';
       }
       return '天气已接入';
     }
@@ -130,7 +131,7 @@ export class TodayBoardSnapshotService {
       return '当前位置暂无天气数据，卡片先展示清单和日历状态。';
     }
     if (calendarState === 'ready') {
-      return `今天已有日历信号，出门前确认 ${checklistCount} 项清单。`;
+      return `今天已有日历，出门前确认 ${checklistCount} 项清单。`;
     }
     return `出门前确认 ${checklistCount} 项清单；天气接入后自动补充提醒。`;
   }

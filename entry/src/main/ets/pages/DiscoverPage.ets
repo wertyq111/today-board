@@ -35,7 +35,7 @@ struct DiscoverPage {
         return '晴天';
       }
       if (this.weatherSignal === 'cloudy') {
-        return '云天';
+        return '多云';
       }
       return '天气已接入';
     }
@@ -123,9 +123,7 @@ struct DiscoverPage {
       Divider().strokeWidth(1).color(AppTheme.APPLE_LINE).margin({ left: 18 })
       this.ruleRow('清单规则', `${this.getChecklistCount()} 项必带`, '天气可用后，再按天气状态追加提醒。', AppRoute.CHECKLIST, false, 'checklist')
       Divider().strokeWidth(1).color(AppTheme.APPLE_LINE).margin({ left: 18 })
-      this.ruleRow('日历信号', this.calendarSyncState === 'ready' ? '已读取' : '待检查', this.calendarSummary, AppRoute.SETTINGS, false, 'calendar')
-      Divider().strokeWidth(1).color(AppTheme.APPLE_LINE).margin({ left: 18 })
-      this.ruleRow('服务卡片', '复用首页结论', '桌面 2x2 卡片和首页使用同一套真实状态。', AppRoute.SETTINGS, false, 'serviceCard')
+      this.ruleRow('日历', this.calendarSyncState === 'ready' ? '已读取' : '待检查', this.calendarSummary, AppRoute.SETTINGS, false, 'calendar')
     }
     .width('100%')
     .backgroundColor(AppTheme.APPLE_SURFACE)
@@ -176,16 +174,24 @@ struct DiscoverPage {
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
       Scroll() {
-        Column({ space: 14 }) {
-          this.pageHeader()
-          this.primaryRule()
-          this.ruleGroup()
+        Row() {
+          Column({ space: 14 }) {
+            this.pageHeader()
+            this.primaryRule()
+            this.ruleGroup()
+          }
+          .width('100%')
+          .constraintSize({ maxWidth: AppTheme.PAGE_MAX_WIDTH })
+          .padding({ left: 16, right: 16, top: 34, bottom: 102 })
         }
         .width('100%')
-        .padding({ left: 16, right: 16, bottom: 102 })
+        .constraintSize({ minHeight: '100%' })
+        .alignItems(VerticalAlign.Top)
+        .justifyContent(FlexAlign.Center)
       }
       .width('100%')
       .height('100%')
+      .edgeEffect(EdgeEffect.Spring, { alwaysEnabled: true })
       .scrollBar(BarState.Off)
       .backgroundColor(AppTheme.APPLE_BACKGROUND)
 

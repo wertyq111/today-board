@@ -115,7 +115,16 @@
 | 2026-05-05 | 已验证 | DevEco bootstrap `assembleHap` 成功，HDC 安装启动成功；已抓取 `artifacts/today_board_home_after_navfix.jpeg`、`artifacts/today_board_home_after_scroll.jpeg`、`artifacts/today_board_profile_calendar_refresh.jpeg` |
 | 2026-05-05 | 已完成 | 已填写 AppGallery Connect 基础信息文档：`docs/release/appgallery-basic-info.md`；本地包名改为 `com.zhouxufeng.todayboard`，应用名统一为“天气看门板” |
 | 2026-05-05 | 已验证 | 根目录和 DevEco bootstrap `assembleHap` 均成功；当前仍未配置 Release 签名，所以构建日志会提示跳过签名 |
-| 2026-05-05 | 已完成 | 已重新绘制应用图标母版：`docs/release/app-icon-source.svg`，视觉为蓝天、日历、清单、雨具四宫格，匹配“天气看门板” |
+| 2026-05-05 | 已完成 | 已按用户反馈把应用图标收敛为单一圆角天气看板：`docs/release/app-icon-source.svg`，主体只保留太阳、云朵和今日提示线 |
 | 2026-05-05 | 已完成 | 已统一包内应用图标资源：`AppScope` 与 `entry` 的 `background.png` 使用新 1024 图，`foreground.png` 为空透明层，`startIcon.png` 与上传 1024 图哈希一致 |
 | 2026-05-05 | 已完成 | 已导出 AppGallery 可上传图标：`docs/release/app-icon-1024.png` 和 `docs/release/app-icon-216.png`，均为正方形 PNG 且小于 3 MB |
-| 2026-05-05 | 已验证 | 新图标接入后，尺寸/大小/透明层/哈希校验通过；根目录 `assembleHap --no-daemon --no-incremental --info` 构建成功 |
+| 2026-05-05 | 已验证 | 单一看板图标接入后，尺寸/大小/透明层/哈希校验通过；根目录 `assembleHap --no-daemon --no-incremental --info` 构建成功 |
+| 2026-05-06 | 已完成 | 已确认应用图标配置接入包内资源；`AppScope`、`entry` 和启动图标继续复用同一张单一看板图标 |
+| 2026-05-06 | 已完成 | 已把天气“云天”文案统一改为“多云”，并把卡片里的“日历信号”改成“日历” |
+| 2026-05-06 | 已完成 | 提醒页已移除桌面卡片入口，只保留天气、清单、日历三条规则 |
+| 2026-05-06 | 已完成 | 首页、清单、提醒、我的和底部导航已增加 520vp 展开屏最大宽度，适配二折叠、三折叠的大屏展开态 |
+| 2026-05-06 | 已验证 | 根目录 `assembleHap --no-daemon --no-incremental --info` 成功；DevEco 直连 `Huawei_TripleFold` 安装启动成功；已抓取 `artifacts/today-board-app-trifold-520.jpeg` 和 `artifacts/today-board-reminder-trifold-520.jpeg` 核对展开屏居中、提醒页无桌面卡片 |
+| 2026-05-06 | 已修复 | 高德 Key 缺失根因是天气服务读了空的 `MapSearchConfig.ets`；已改为通过可提交配置桥接到本机忽略 Key 文件，真实 Key 不进入源码 |
+| 2026-05-06 | 已验证 | 高德天气接口用本机 Key 返回 `status=1/info=OK`；根目录 `assembleHap` 成功；DevEco bootstrap 已编译到 `PackageHap`，最后仅因本机 keystore/JDK 算法问题停在签名 |
+| 2026-05-07 | 已修复 | 根据 AppGallery 功耗/UX 测试报告处理两项问题：首页天气视频在 `onPageHide` 停止，所有页面 `Scroll` 显式开启 `EdgeEffect.Spring` 回弹 |
+| 2026-05-07 | 已验证 | 根目录 `assembleHap` 成功；DevEco bootstrap 已同步页面代码并编译到 `PackageHap`，最后仍停在既有 keystore/JDK `HmacPBESHA256` 签名问题 |

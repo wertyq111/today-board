@@ -12,9 +12,11 @@ struct ChecklistPage {
   @State customLabel: string = '';
   @State customIcon: ChecklistIconName = 'bag';
   @State actionMessage: string = '';
+  private toastToken: number = 0;
 
   aboutToAppear(): void {
-    BoardStore.initialize();
+    const hostContext = this.getUIContext().getHostContext();
+    BoardStore.initialize(hostContext);
   }
 
   private getAllChecklistItems(): ChecklistItem[] {
@@ -45,19 +47,36 @@ struct ChecklistPage {
 
   private toggleItem(item: ChecklistItem): void {
     BoardStore.toggleChecklistItem(item.id);
-    this.actionMessage = item.selected ? `${item.label} 已从今日清单移除。` : `${item.label} 已加入今日清单。`;
+    const message = item.selected ? `${item.label} 已从今日清单移除。` : `${item.label} 已加入今日清单。`;
+    this.showActionToast(message);
   }
 
   private addCustomItem(): void {
+    const label = this.customLabel.trim();
     const added = BoardStore.addCustomChecklistItem(this.customLabel, this.customIcon);
     if (!added) {
-      this.actionMessage = '物品名称为空或已经存在。';
+      this.showActionToast('物品名称为空或已经存在。');
       return;
     }
-    this.actionMessage = `${this.customLabel.trim()} 已加入今日清单。`;
+    this.showActionToast(`${label} 已加入今日清单。`);
     this.customLabel = '';
     this.customIcon = 'bag';
     this.customExpanded = false;
+  }
+
+  private showActionToast(message: string): void {
+    const normalizedMessage = message.trim();
+    if (normalizedMessage.length === 0) {
+      return;
+    }
+    const nextToken = this.toastToken + 1;
+    this.toastToken = nextToken;
+    this.actionMessage = normalizedMessage;
+    setTimeout(() => {
+      if (this.toastToken === nextToken) {
+        this.actionMessage = '';
+      }
+    }, 2200);
   }
 
   @Builder
@@ -278,35 +297,57 @@ struct ChecklistPage {
   }
 
   @Builder
-  messageLine() {
-    if (this.actionMessage.length > 0) {
-      Text(this.actionMessage)
-        .fontSize(12)
-        .fontColor(AppTheme.APPLE_SECONDARY_TEXT)
-        .width('100%')
-        .padding({ left: 6, right: 6 })
-    }
+  toastBanner() {
+    Text(this.actionMessage)
+      .fontSize(13)
+      .fontWeight(FontWeight.Medium)
+      .fontColor('#FFFFFF')
+      .textAlign(TextAlign.Center)
+      .lineHeight(18)
+      .maxLines(2)
+      .textOverflow({ overflow: TextOverflow.Ellipsis })
+      .width('100%')
+      .padding({ left: 16, right: 16, top: 10, bottom: 10 })
+      .backgroundColor('#E61D1D1F')
+      .borderRadius(18)
+      .shadow({ radius: 18, color: '#30000000', offsetX: 0, offsetY: 8 })
   }
 
   build() {
     Stack({ alignContent: Alignment.Bottom }) {
       Scroll() {
-        Column({ space: 14 }) {
-          this.pageHeader()
-          this.tagGroup()
-          this.selectedSummary()
-          this.customGroup()
-          this.messageLine()
+        Row() {
+          Column({ space: 14 }) {
+            this.pageHeader()
+            this.tagGroup()
+            this.selectedSummary()
+            this.customGroup()
+          }
+          .width('100%')
+          .constraintSize({ maxWidth: AppTheme.PAGE_MAX_WIDTH })
+          .padding({ left: 16, right: 16, top: 34, bottom: 102 })
         }
         .width('100%')
-        .padding({ left: 16, right: 16, top: 34, bottom: 102 })
+        .constraintSize({ minHeight: '100%' })
+        .alignItems(VerticalAlign.Top)
+        .justifyContent(FlexAlign.Center)
       }
       .width('100%')
       .height('100%')
+      .edgeEffect(EdgeEffect.Spring, { alwaysEnabled: true })
       .scrollBar(BarState.Off)
       .backgroundColor(AppTheme.APPLE_BACKGROUND)
 
       AppBottomNav({ activeTab: 'checklist' })
+
+      if (this.actionMessage.length > 0) {
+        Row() {
+          this.toastBanner()
+        }
+        .width('100%')
+        .padding({ left: 28, right: 28 })
+        .position({ x: 0, y: 44 })
+      }
     }
     .width('100%')
     .height('100%')

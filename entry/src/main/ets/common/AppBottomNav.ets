@@ -51,6 +51,7 @@ export struct AppBottomNav {
       this.navItem('我的', 'profile', 'profile', AppRoute.SETTINGS)
     }
     .width('90%')
+    .constraintSize({ maxWidth: AppTheme.NAV_MAX_WIDTH })
     .height(58)
     .padding({ left: 10, right: 10, top: 6, bottom: 6 })
     .backgroundColor(AppTheme.APPLE_NAV_BG)

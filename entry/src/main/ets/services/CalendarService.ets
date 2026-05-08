@@ -54,8 +54,18 @@ export class CalendarService {
       abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
 
     if (!permissionGranted && requestPermission) {
-      const permissionResult = await atManager.requestPermissionsFromUser(hostContext, [CalendarService.READ_PERMISSION]);
-      permissionGranted = permissionResult.authResults.some((result: number) => result === 0);
+      const permissionStatus = atManager.getSelfPermissionStatus(CalendarService.READ_PERMISSION);
+      if (permissionStatus === abilityAccessCtrl.PermissionStatus.NOT_DETERMINED) {
+        const permissionResult = await atManager.requestPermissionsFromUser(hostContext, [CalendarService.READ_PERMISSION]);
+        permissionGranted = permissionResult.authResults.some((result: number): boolean =>
+          result === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED);
+      } else {
+        const permissionResults = await atManager.requestPermissionOnSetting(hostContext, [CalendarService.READ_PERMISSION]);
+        permissionGranted = permissionResults.some((result: number): boolean =>
+          result === abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED);
+      }
+      permissionGranted = atManager.checkAccessTokenSync(tokenId, CalendarService.READ_PERMISSION) ===
+        abilityAccessCtrl.GrantStatus.PERMISSION_GRANTED;
     }
 
     if (!permissionGranted) {

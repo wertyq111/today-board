@@ -1,5 +1,5 @@
 import { http } from '@kit.NetworkKit';
-import { MAP_SEARCH_API_KEY } from '../config/MapSearchConfig';
+import { AMAP_WEATHER_API_KEY } from '../config/AmapWeatherConfig';
 
 type AmapWeatherSignal = 'unknown' | 'clear' | 'rain_soon' | 'sunny' | 'rainy' | 'snowy' | 'cloudy';
 
@@ -63,7 +63,7 @@ interface AMapWeatherResponse {
 
 export class AmapWeatherService {
   static readonly PROVIDER_AMAP: string = 'amap';
-  private static readonly API_KEY: string = MAP_SEARCH_API_KEY.trim();
+  private static readonly API_KEY: string = AMAP_WEATHER_API_KEY.trim();
 
   static isConfigured(): boolean {
     return AmapWeatherService.API_KEY.length > 0;

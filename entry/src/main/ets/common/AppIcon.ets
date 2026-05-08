@@ -117,9 +117,9 @@ export class AppIconMapper {
 
 @Component
 export struct AppIcon {
-  name: AppIconName = 'bag';
-  iconSize: number = 24;
-  color: string = '#1D1D1F';
+  @Prop name: AppIconName = 'bag';
+  @Prop iconSize: number = 24;
+  @Prop color: string = '#1D1D1F';
 
   build() {
     SymbolGlyph(AppIconMapper.getSymbol(this.name))

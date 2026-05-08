@@ -598,6 +598,7 @@ struct SetupPage {
       .width('100%')
       .padding(AppTheme.PAGE_PADDING)
     }
+    .edgeEffect(EdgeEffect.Spring, { alwaysEnabled: true })
     .scrollBar(BarState.Off)
     .backgroundColor(AppTheme.PAGE_BACKGROUND)
   }
