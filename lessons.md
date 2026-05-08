@@ -56,3 +56,4 @@
 | 2026-05-06 | DevEco 当前运行 `.deveco-bootstrap/TodayBoardBootstrap` 时，根目录改动不会进入用户正在看的包 | 修 UI 后必须同步 bootstrap 工程、用 DevEco 重新安装 signed HAP，再截图确认 |
 | 2026-05-07 | AppGallery 功耗测试会检查路由栈里前台不可见页面的动效 | 首页天气 `Video` 必须在 `onPageHide` 停止，在 `onPageShow` 才恢复，不能只靠页面被遮住 |
 | 2026-05-07 | ArkUI `Scroll` 默认边界动效是 `EdgeEffect.None` | 主页面和旧注册页的 `Scroll` 都显式设置 `EdgeEffect.Spring`，内容不足一屏也要开 `alwaysEnabled` |
+| 2026-05-08 | 上架文案里的开发者中文名不能凭记忆写 | 当前项目对外中文名统一写 `周许峰`；英文名可继续用 `Zhou Xufeng` |

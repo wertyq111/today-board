@@ -4,7 +4,7 @@
 | --- | --- |
 | 应用名称 | 天气看门板 |
 | 包名 / Bundle Name | com.zhouxufeng.todayboard |
-| 开发者 / Vendor | Zhou Xufeng |
+| 开发者 / Vendor | 周许峰 / Zhou Xufeng |
 | 默认语言 | 简体中文 |
 | 语言代码 | zh-CN |
 | 应用分类 | 生活服务 |
