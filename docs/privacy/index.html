@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>天气看门板隐私政策</title>
+  <meta name="description" content="天气看门板隐私政策">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f3f7fb;
+      --panel: #ffffff;
+      --text: #122033;
+      --muted: #5c6b7a;
+      --line: #dbe4ee;
+      --brand: #1e6fff;
+      --brand-soft: #eaf2ff;
+      --shadow: 0 20px 50px rgba(18, 32, 51, 0.08);
+      --max: 900px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+        "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(30, 111, 255, 0.16), transparent 28%),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    .shell {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+      padding: 40px 0 80px;
+    }
+
+    .hero,
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(219, 228, 238, 0.9);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero {
+      padding: 32px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 18px 0 12px;
+      font-size: clamp(30px, 5vw, 42px);
+      line-height: 1.15;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    p,
+    li {
+      font-size: 16px;
+    }
+
+    .meta,
+    .lead {
+      color: var(--muted);
+    }
+
+    .meta {
+      margin: 0;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 760px;
+    }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .toc a {
+      color: var(--brand);
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .card {
+      padding: 28px 32px;
+      margin-top: 18px;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      font-size: 15px;
+    }
+
+    th {
+      background: #f8fbff;
+      width: 28%;
+    }
+
+    tr:last-child td,
+    tr:last-child th {
+      border-bottom: 0;
+    }
+
+    a {
+      color: var(--brand);
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(calc(100% - 20px), var(--max));
+        padding: 20px 0 48px;
+      }
+
+      .hero,
+      .card {
+        border-radius: 20px;
+        padding: 22px 18px;
+      }
+
+      th,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      th {
+        border-bottom: 0;
+        padding-bottom: 4px;
+      }
+
+      td {
+        padding-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">天气看门板 · 隐私政策</div>
+      <h1>天气看门板隐私政策</h1>
+      <p class="meta">生效日期：2026-05-08</p>
+      <p class="lead">
+        天气看门板是一个离线优先的 HarmonyOS NEXT 应用，用来在本机集中查看天气、日程和出门清单。
+        我们尊重并保护你的个人信息。本政策用于说明我们会收集什么、为什么收集、如何使用，以及你可以如何管理自己的信息。
+      </p>
+      <nav class="toc" aria-label="目录">
+        <a href="#operator">运营者信息</a>
+        <a href="#scope">适用范围</a>
+        <a href="#collection">信息收集与使用</a>
+        <a href="#sharing">信息共享</a>
+        <a href="#storage">存储与保护</a>
+        <a href="#user-rights">你的权利</a>
+        <a href="#minors">未成年人</a>
+        <a href="#contact">联系我们</a>
+      </nav>
+    </section>
+
+    <section class="card" id="operator">
+      <h2>1. 运营者信息</h2>
+      <table>
+        <tr>
+          <th>应用名称</th>
+          <td>天气看门板</td>
+        </tr>
+        <tr>
+          <th>开发者</th>
+          <td>周旭峰</td>
+        </tr>
+        <tr>
+          <th>应用包名</th>
+          <td>com.zhouxufeng.todayboard</td>
+        </tr>
+        <tr>
+          <th>联系邮箱</th>
+          <td><a href="mailto:wertyq222@163.com">wertyq222@163.com</a></td>
+        </tr>
+        <tr>
+          <th>项目主页</th>
+          <td><a href="https://github.com/wertyq111/today-board">https://github.com/wertyq111/today-board</a></td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="card" id="scope">
+      <h2>2. 适用范围</h2>
+      <p>
+        本政策适用于天气看门板应用内提供的功能和服务，包括天气刷新、日历读取、出门清单、本地提醒判断和桌面卡片展示。
+        如果本应用后续新增需要收集或处理个人信息的功能，我们会在功能上线前更新本政策。
+      </p>
+    </section>
+
+    <section class="card" id="collection">
+      <h2>3. 信息收集与使用</h2>
+      <p>天气看门板不提供账号系统，不要求注册登录，也不提供聊天、评论、发布内容、支付和广告功能。</p>
+
+      <h3>3.1 我们会收集的信息</h3>
+      <table>
+        <tr>
+          <th>信息类型</th>
+          <th>用途</th>
+        </tr>
+        <tr>
+          <td>日历信息</td>
+          <td>在你授权后读取系统日历中今天的后续日程，用于首页和提醒页展示日程状态。</td>
+        </tr>
+        <tr>
+          <td>位置信息</td>
+          <td>在你授权后获取当前位置，用于定位当前城市、行政区编码，并刷新真实天气。</td>
+        </tr>
+        <tr>
+          <td>出门清单和本地设置</td>
+          <td>保存你勾选的清单、自定义清单内容和本地看板设置，便于再次打开应用时继续使用。</td>
+        </tr>
+        <tr>
+          <td>地点搜索关键词</td>
+          <td>当你在首次配置页主动使用地点搜索时，会把你输入的地点关键词发送给高德开放平台，用于返回真实地点候选结果。</td>
+        </tr>
+      </table>
+
+      <h3>3.2 权限说明</h3>
+      <table>
+        <tr>
+          <th>权限</th>
+          <th>用途</th>
+        </tr>
+        <tr>
+          <td>日历权限</td>
+          <td>读取今天的后续日程，并展示在天气看板和提醒信息里。</td>
+        </tr>
+        <tr>
+          <td>定位权限</td>
+          <td>获取当前位置，用于天气刷新和当前位置名称展示。</td>
+        </tr>
+        <tr>
+          <td>网络权限</td>
+          <td>访问高德开放平台天气、地理编码和地点搜索接口，返回真实天气和地点结果。</td>
+        </tr>
+      </table>
+
+      <h3>3.3 我们如何使用这些信息</h3>
+      <ul>
+        <li>日历信息只用于本机展示当天日程状态，不会上传到开发者自有服务器。</li>
+        <li>位置信息只用于本次或最近一次天气刷新，不会用于广告、画像或行为分析。</li>
+        <li>出门清单和本地设置只保存在设备本地，用于维持你的使用状态。</li>
+        <li>如果你不授权日历或定位，对应功能会直接不可用或显示缺失状态，不会用虚构数据代替。</li>
+      </ul>
+    </section>
+
+    <section class="card" id="sharing">
+      <h2>4. 信息共享、转让和公开披露</h2>
+
+      <h3>4.1 不会共享给自有服务器</h3>
+      <p>
+        天气看门板没有自有后端服务。我们不会把你的日历内容、清单内容或设备上的本地设置上传到开发者自有服务器。
+      </p>
+
+      <h3>4.2 第三方服务说明</h3>
+      <p>
+        为了提供真实天气、地理位置解析和地点搜索功能，应用会在你主动触发相关功能并授权后，请求高德开放平台接口。
+        发送的信息可能包括经纬度、行政区编码和你输入的地点关键词。该部分信息由高德开放平台按照其自身规则处理。
+      </p>
+      <table>
+        <tr>
+          <th>第三方服务</th>
+          <th>使用场景</th>
+        </tr>
+        <tr>
+          <td>高德开放平台</td>
+          <td>天气查询、逆地理编码、地点搜索</td>
+        </tr>
+      </table>
+
+      <h3>4.3 法定情形</h3>
+      <p>
+        在法律法规要求、司法机关或行政机关依法提出要求的情况下，我们可能依法配合提供相关信息。
+      </p>
+    </section>
+
+    <section class="card" id="storage">
+      <h2>5. 信息存储与保护</h2>
+      <ul>
+        <li>出门清单、本地设置、天气摘要缓存和日历状态摘要默认保存在你的设备本地。</li>
+        <li>我们采取应用内最小化原则，只保留实现当前功能所需的信息。</li>
+        <li>由于互联网环境并非绝对安全，请你妥善保管自己的设备和系统权限设置。</li>
+      </ul>
+    </section>
+
+    <section class="card" id="user-rights">
+      <h2>6. 你的权利</h2>
+      <p>你可以通过以下方式管理自己的个人信息和授权：</p>
+      <ul>
+        <li>在系统设置中关闭日历权限或定位权限。关闭后，对应功能将停止工作。</li>
+        <li>在应用内修改或清空你的出门清单和本地设置。</li>
+        <li>卸载应用后，保存在应用沙箱内的数据会随应用一起删除，但是否完全删除仍以系统行为为准。</li>
+        <li>如果你对本政策或个人信息处理有疑问，可以通过本页公布的联系邮箱与我们联系。</li>
+      </ul>
+    </section>
+
+    <section class="card" id="minors">
+      <h2>7. 未成年人说明</h2>
+      <p>
+        本应用不是专门面向未成年人设计的产品。如你是未成年人，请在监护人指导下阅读并决定是否使用本应用。
+      </p>
+    </section>
+
+    <section class="card" id="updates">
+      <h2>8. 政策更新</h2>
+      <p>
+        如果本政策发生重大变化，我们会在本页面更新内容和生效日期。继续使用本应用即表示你已知悉更新后的政策内容。
+      </p>
+    </section>
+
+    <section class="card" id="contact">
+      <h2>9. 联系我们</h2>
+      <p>如果你对本政策有任何疑问、意见或投诉，可以通过以下方式联系我们：</p>
+      <table>
+        <tr>
+          <th>联系人</th>
+          <td>周旭峰</td>
+        </tr>
+        <tr>
+          <th>邮箱</th>
+          <td><a href="mailto:wertyq222@163.com">wertyq222@163.com</a></td>
+        </tr>
+        <tr>
+          <th>GitHub Issues</th>
+          <td><a href="https://github.com/wertyq111/today-board/issues">https://github.com/wertyq111/today-board/issues</a></td>
+        </tr>
+      </table>
+      <p class="footer">
+        本页面托管于 GitHub Pages，用于应用商店隐私政策展示，不用于收集你在本页面的输入信息。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
